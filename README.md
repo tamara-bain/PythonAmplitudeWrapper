@@ -7,7 +7,7 @@ It simplifies sending events to amplitude, accessing user properties, and pullin
 ### Getting Started
 
 You can add this to your project by including the github repo url with pip:
-`pip install git+https://github.com/Tamarabyte/PythonAmplitudeWrapper`
+`pip install git+https://github.com/tamara-bain/PythonAmplitudeWrapper`
 
 You will need to specify your amplitude api keys as environmental variables:
 

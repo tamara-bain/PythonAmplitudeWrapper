@@ -9,7 +9,7 @@ from setuptools import setup
 setup(
     name='Amplitude API Wrapper',
     version='0.1',
-    url='https://github.com/Tamarabyte/PythonAmplitudeWrapper',
+    url='https://github.com/tamara-bain/PythonAmplitudeWrapper',
     license='MIT',
     description='Python wrapper for amplitude api',
 
