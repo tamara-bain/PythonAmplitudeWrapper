@@ -24,18 +24,22 @@ class AmplitudeWrapper:
     def __init__(self, properties={}):
         self.api_key = _get_env_variable("AMPLITUDE_API_KEY")
         self.secret_key = _get_env_variable("AMPLITUDE_API_SECRET_KEY")
-        self.data = [("api_key", self.api_key)]
+        self.api_key_data = ("api_key", self.api_key)
         self.global_properties = properties
 
     def __send_event(self, event, post_async=False):
         self.__update_with_global_event_properties(event)
-        self.data.append(('event', json.dumps([event])))
-        result = requests.post(self.HTTP_URL, data=self.data)
+        data = []
+        data.append(self.api_key_data)
+        data.append(('event', json.dumps([event])))
+        result = requests.post(self.HTTP_URL, data=data)
         return result
 
     def __send_user_properties(self, identification):
-        self.data.append(('identification', json.dumps([identification])))
-        result = requests.post(self.IDENTIFY_URL, data=self.data)
+        data = []
+        data.append(self.api_key_data)
+        data.append(('identification', json.dumps([identification])))
+        result = requests.post(self.IDENTIFY_URL, data=data)
         return result
 
     def __build_event(self, user_id, event_name):
