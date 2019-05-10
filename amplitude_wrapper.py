@@ -32,28 +32,53 @@ class AmplitudeWrapper:
         data = []
         data.append(self.api_key_data)
         data.append(('event', json.dumps([event])))
-        result = requests.post(self.HTTP_URL, data=data)
+        try:
+            result = requests.post(self.HTTP_URL, data=data, timeout=5)
+        except requests.exceptions.ReadTimeout:
+            return False
         return result
 
     def __send_user_properties(self, identification):
         data = []
         data.append(self.api_key_data)
         data.append(('identification', json.dumps([identification])))
-        result = requests.post(self.IDENTIFY_URL, data=data)
+        try:
+            result = requests.post(self.IDENTIFY_URL, data=data, timeout=5)
+        except requests.exceptions.ReadTimeout:
+            return False
         return result
 
-    def __build_event(self, user_id, event_name):
-        return {
-            "user_id": user_id.lower(),
+    def __build_event(self, user_id=None, event_name=None, device_id=None):
+        props = {
             "event_type": event_name,
             'event_properties': {}
         }
 
-    def __build_user_properties(self, user_id, properties):
-        return {
+        if device_id is not None:
+            props['device_id'] = device_id
+
+        if user_id is not None:
+            props['user_id'] = user_id.lower()
+
+        return props
+
+    def __build_user_properties(self, user_id, amplitude_properties=None, properties=None):
+        """
+        Amplitude properties are amplitude specific user properties like
+        'device_id', 'country'
+        """
+
+        user_props = {
             "user_id": user_id.lower(),
-            "user_properties": properties,
         }
+
+        if amplitude_properties is not None:
+            user_props.update(amplitude_properties)
+
+        if properties is not None:
+            user_props["user_properties"]: properties
+
+        return user_props
 
     def __add_event_properties(self, event, event_properties):
         event['event_properties'] = event_properties
@@ -62,8 +87,12 @@ class AmplitudeWrapper:
             self.global_properties.update(event['event_properties'])
             event['event_properties'] = self.global_properties
 
+    def identify(self, user_amplitude_id, amplitude_properties=None, user_properties=None):
+        data = self.__build_user_properties(user_amplitude_id, amplitude_properties=amplitude_properties, properties=user_properties)
+        return self.__send_user_properties(data)
+
     def send_event(self, user_amplitude_id, event_name, event_properties=None):
-        event = self.__build_event(user_amplitude_id, event_name)
+        event = self.__build_event(event_name=event_name, user_id=user_amplitude_id)
 
         if event_properties is not None:
             self.__add_event_properties(event, event_properties)
@@ -71,8 +100,17 @@ class AmplitudeWrapper:
         result = self.__send_event(event)
         return result
 
-    def set_user_properties(self, user_amplitude_id, user_properties):
-        data = self.__build_user_properties(user_amplitude_id, user_properties)
+    def send_anonymous_event(self, device_id, event_name, event_properties=None):
+        event = self.__build_event(device_id=device_id, event_name=event_name)
+
+        if event_properties is not None:
+            self.__add_event_properties(event, event_properties)
+
+        result = self.__send_event(event)
+        return result
+
+    def set_user_properties(self, user_amplitude_id, user_properties, amplitude_properties=None):
+        data = self.__build_user_properties(user_amplitude_id, properties=user_properties, amplitude_properties=amplitude_properties)
         return self.__send_user_properties(data)
 
     def get_unique_event_count_per_day(self, event_name, number_of_days, end=None):

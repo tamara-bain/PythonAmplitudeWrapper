@@ -14,6 +14,9 @@ You will need to specify your amplitude api keys as environmental variables:
     export AMPLITUDE_API_KEY="ASASA99AABLAH"
     export AMPLITUDE_API_SECRET_KEY="ASASECRETBLAH"
 
+### Run Tests
+`python -m unittest test_amplitude_wrapper`
+
 ### Example Uses
 
 You can identify users as follows:
