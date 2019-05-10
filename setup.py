@@ -1,14 +1,8 @@
-"""
-TimeUUID
--------------
-Sequentially sortable, time-based UUIDs
-"""
-
 from setuptools import setup
 
 setup(
     name='Amplitude API Wrapper',
-    version='0.2',
+    version='0.3',
     url='https://github.com/tamara-bain/PythonAmplitudeWrapper',
     license='MIT',
     description='Python wrapper for amplitude api',
