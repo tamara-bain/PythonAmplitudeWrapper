@@ -76,7 +76,7 @@ class AmplitudeWrapper:
             user_props.update(amplitude_properties)
 
         if properties is not None:
-            user_props["user_properties"]: properties
+            user_props["user_properties"] = properties
 
         return user_props
 

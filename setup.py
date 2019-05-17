@@ -2,12 +2,13 @@ from setuptools import setup
 
 setup(
     name='Amplitude API Wrapper',
-    version='0.4',
+    version='0.5',
     url='https://github.com/tamara-bain/PythonAmplitudeWrapper',
     license='MIT',
     description='Python wrapper for amplitude api',
+    install_requires=['django', 'djangorestframework', 'model-mommy'],
 
-    py_modules=['amplitude_wrapper'],
+    py_modules=['amplitude_wrapper', 'requests'],
     platforms='any',
     test_suite='test_amplitude_wrapper',
 
