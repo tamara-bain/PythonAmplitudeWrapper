@@ -21,10 +21,13 @@ class AmplitudeWrapper:
     IDENTIFY_URL = "https://api.amplitude.com/identify"
     EVENT_DATA_URL = 'https://amplitude.com/api/2/events/segmentation'
 
-    def __init__(self, properties={}):
+    def __init__(self, properties=None):
         self.api_key = _get_env_variable("AMPLITUDE_API_KEY")
         self.secret_key = _get_env_variable("AMPLITUDE_API_SECRET_KEY")
         self.api_key_data = ("api_key", self.api_key)
+
+        if properties is None:
+            properties = {}
         self.global_properties = properties
 
     def __send_event(self, event, post_async=False):
