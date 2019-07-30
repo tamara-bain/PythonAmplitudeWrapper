@@ -103,6 +103,19 @@ class AmplitudeWrapper:
         result = self.__send_event(event)
         return result
 
+    def send_revenue_event(self, user_amplitude_id, event_name, price, quantity, productId, event_properties=None):
+        event = self.__build_event(event_name=event_name, user_id=user_amplitude_id)
+
+        if event_properties is not None:
+            self.__add_event_properties(event, event_properties)
+
+        event['quantity'] = quantity
+        event['price'] = price
+        event['productId'] = productId
+
+        result = self.__send_event(event)
+        return result
+
     def send_anonymous_event(self, device_id, event_name, event_properties=None):
         event = self.__build_event(device_id=device_id, event_name=event_name)
 
