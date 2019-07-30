@@ -23,7 +23,7 @@ class AmplitudeWrapperTest(unittest.TestCase):
         self.assertEqual(mock_post.call_count, 1)
 
     @patch.object(requests, 'post')
-    def test_send_revenue_event(self, mock_past):
+    def test_send_revenue_event(self, mock_post):
         mock_post.return_value = get_fake_response()
         wrapper = AmplitudeWrapper()
         result = wrapper.send_revenue_event('test@test.com', 'click-button', 10.00, 1, 'test-product', {'COLOR': 'BLUE'})
