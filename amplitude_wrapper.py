@@ -17,26 +17,22 @@ def _get_env_variable(var_name):
 
 class AmplitudeWrapper:
 
-    HTTP_URL = "https://api.amplitude.com/httpapi"
+    HTTP_URL = "https://api.amplitude.com/2/httpapi"
     IDENTIFY_URL = "https://api.amplitude.com/identify"
     EVENT_DATA_URL = 'https://amplitude.com/api/2/events/segmentation'
 
-    def __init__(self, properties=None):
+    def __init__(self):
         self.api_key = _get_env_variable("AMPLITUDE_API_KEY")
         self.secret_key = _get_env_variable("AMPLITUDE_API_SECRET_KEY")
         self.api_key_data = ("api_key", self.api_key)
 
-        if properties is None:
-            properties = {}
-        self.global_properties = properties
-
-    def __send_event(self, event, post_async=False):
-        self.__update_with_global_event_properties(event)
-        data = []
-        data.append(self.api_key_data)
-        data.append(('event', json.dumps([event])))
+    def __send_event(self, event):
+        data = {
+            "api_key": self.api_key,
+            "events": [event]
+        }
         try:
-            result = requests.post(self.HTTP_URL, data=data, timeout=5)
+            result = requests.post(self.HTTP_URL, data=json.dumps(data), timeout=5)
         except requests.exceptions.ReadTimeout:
             return False
         return result
@@ -54,7 +50,8 @@ class AmplitudeWrapper:
     def __build_event(self, user_id=None, event_name=None, device_id=None):
         props = {
             "event_type": event_name,
-            'event_properties': {}
+            'event_properties': {},
+            'user_properties': {}
         }
 
         if device_id is not None:
@@ -86,28 +83,33 @@ class AmplitudeWrapper:
     def __add_event_properties(self, event, event_properties):
         event['event_properties'] = event_properties
 
-    def __update_with_global_event_properties(self, event):
-            self.global_properties.update(event['event_properties'])
-            event['event_properties'] = self.global_properties
+    def __add_user_properties(self, event, user_properties):
+        event['user_properties'] = user_properties
 
     def identify(self, user_amplitude_id, amplitude_properties=None, user_properties=None):
         data = self.__build_user_properties(user_amplitude_id, amplitude_properties=amplitude_properties, properties=user_properties)
         return self.__send_user_properties(data)
 
-    def send_event(self, user_amplitude_id, event_name, event_properties=None):
+    def send_event(self, user_amplitude_id, event_name, event_properties=None, user_properties=None):
         event = self.__build_event(event_name=event_name, user_id=user_amplitude_id)
 
         if event_properties is not None:
             self.__add_event_properties(event, event_properties)
+
+        if user_properties is not None:
+            self.__add_user_properties(event, user_properties)
 
         result = self.__send_event(event)
         return result
 
-    def send_revenue_event(self, user_amplitude_id, event_name, price, quantity, productId, event_properties=None):
+    def send_revenue_event(self, user_amplitude_id, event_name, price, quantity, productId, event_properties=None, user_properties=None):
         event = self.__build_event(event_name=event_name, user_id=user_amplitude_id)
 
         if event_properties is not None:
             self.__add_event_properties(event, event_properties)
+
+        if user_properties is not None:
+            self.__add_user_properties(event, user_properties)
 
         event['quantity'] = quantity
         event['price'] = price
@@ -157,9 +159,3 @@ class AmplitudeWrapper:
             return [0 for i in range(number_of_days)]
         except json.decoder.JSONDecodeError:
             return None
-
-
-
-
-
-

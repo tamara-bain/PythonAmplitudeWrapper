@@ -57,8 +57,8 @@ class AmplitudeWrapperTest(unittest.TestCase):
         result2 = wrapper.send_event('test@test.com', 'load-page', {'COLOR': 'BLUE'})
         self.assertEqual(result1.status_code, 200, msg=result1.text)
         self.assertEqual(result2.status_code, 200, msg=result2.text)
-        event_type = json.loads(mock_post.call_args_list[0][1]['data'][1][1])[0]['event_type']
-        event_type2 = json.loads(mock_post.call_args_list[1][1]['data'][1][1])[0]['event_type']
+        event_type = json.loads(mock_post.call_args_list[0][1]['data'])['events'][0]['event_type']
+        event_type2 = json.loads(mock_post.call_args_list[1][1]['data'])['events'][0]['event_type']
         self.assertNotEqual(event_type, event_type2)
 
     def test_get_unique_event_count_per_day(self):
