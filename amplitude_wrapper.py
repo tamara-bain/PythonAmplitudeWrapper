@@ -86,11 +86,14 @@ class AmplitudeWrapper:
     def __add_user_properties(self, event, user_properties):
         event['user_properties'] = user_properties
 
+    def __add_amplitude_properties(self, event, amplitude_properties):
+        amplitude_properties.update(event)
+
     def identify(self, user_amplitude_id, amplitude_properties=None, user_properties=None):
         data = self.__build_user_properties(user_amplitude_id, amplitude_properties=amplitude_properties, properties=user_properties)
         return self.__send_user_properties(data)
 
-    def send_event(self, user_amplitude_id, event_name, event_properties=None, user_properties=None):
+    def send_event(self, user_amplitude_id, event_name, event_properties=None, user_properties=None, amplitude_properties=None):
         event = self.__build_event(event_name=event_name, user_id=user_amplitude_id)
 
         if event_properties is not None:
@@ -98,11 +101,14 @@ class AmplitudeWrapper:
 
         if user_properties is not None:
             self.__add_user_properties(event, user_properties)
+
+        if amplitude_properties is not None:
+            self.__add_amplitude_properties(event, amplitude_properties)
 
         result = self.__send_event(event)
         return result
 
-    def send_revenue_event(self, user_amplitude_id, event_name, price, quantity, productId, event_properties=None, user_properties=None):
+    def send_revenue_event(self, user_amplitude_id, event_name, price, quantity, productId, event_properties=None, user_properties=None, amplitude_properties=None):
         event = self.__build_event(event_name=event_name, user_id=user_amplitude_id)
 
         if event_properties is not None:
@@ -110,6 +116,9 @@ class AmplitudeWrapper:
 
         if user_properties is not None:
             self.__add_user_properties(event, user_properties)
+
+        if amplitude_properties is not None:
+            self.__add_amplitude_properties(event, amplitude_properties)
 
         event['quantity'] = quantity
         event['price'] = price
