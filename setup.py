@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Amplitude API Wrapper',
-    version='0.81',
+    version='0.82',
     url='https://github.com/tamara-bain/PythonAmplitudeWrapper',
     license='MIT',
     description='Python wrapper for amplitude api',

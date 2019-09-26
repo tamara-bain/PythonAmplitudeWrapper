@@ -87,7 +87,7 @@ class AmplitudeWrapper:
         event['user_properties'] = user_properties
 
     def __add_amplitude_properties(self, event, amplitude_properties):
-        amplitude_properties.update(event)
+        event.update(amplitude_properties)
 
     def identify(self, user_amplitude_id, amplitude_properties=None, user_properties=None):
         data = self.__build_user_properties(user_amplitude_id, amplitude_properties=amplitude_properties, properties=user_properties)
